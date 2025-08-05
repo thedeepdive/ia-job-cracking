@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cracking the AI Job Interview: An Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: A thematic, multi-section single page with a sticky top navigation bar. This structure allows for non-linear exploration, enabling users to jump to the most relevant sections (Market, Roles, Pipeline, Prep, etc.). This is more user-friendly than a linear slide-by-slide format, as it provides a clear overview and facilitates focused learning based on the user's current needs. -->
+    <!-- Visualization & Content Choices: 1. Salary Data -> Compare -> Horizontal Bar Chart (Chart.js) -> Hover tooltips -> More visually effective for comparing ranges than a list. 2. Interview Pipeline -> Organize/Show Process -> Interactive HTML/CSS Diagram -> Click to reveal details -> More intuitive and engaging than a numbered list, uses progressive disclosure. 3. Grouped Lists (Prep, Interview Types) -> Organize -> Tabbed Content -> Click to switch panes -> Prevents overwhelming content length and allows focused study. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #334155; /* slate-700 */
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #0891b2; /* cyan-600 */
+            border-bottom-color: #0891b2; /* cyan-600 */
+        }
+        .section-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .pipeline-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            padding: 1rem;
+            border: 1px solid #e2e8f0; /* slate-200 */
+            border-radius: 0.5rem;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        .pipeline-item.active, .pipeline-item:hover {
+            border-color: #0891b2; /* cyan-600 */
+            background-color: #f0f9ff; /* cyan-50 */
+            transform: scale(1.05);
+        }
+        .pipeline-item .number {
+            background-color: #0891b2; /* cyan-600 */
+            color: white;
+            border-radius: 9999px;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .pipeline-connector {
+            flex-grow: 1;
+            height: 2px;
+            background-color: #cbd5e1; /* slate-300 */
+            margin: auto 0.5rem;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #0891b2; /* cyan-600 */
+            color: white;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-slate-800">AI Interview Guide</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#market" class="nav-link px-3 py-2 text-sm font-medium text-slate-600">Market</a>
+                        <a href="#roles" class="nav-link px-3 py-2 text-sm font-medium text-slate-600">Roles</a>
+                        <a href="#pipeline" class="nav-link px-3 py-2 text-sm font-medium text-slate-600">Pipeline</a>
+                        <a href="#prep" class="nav-link px-3 py-2 text-sm font-medium text-slate-600">Preparation</a>
+                        <a href="#interview" class="nav-link px-3 py-2 text-sm font-medium text-slate-600">Interviews</a>
+                        <a href="#closing" class="nav-link px-3 py-2 text-sm font-medium text-slate-600">Closing</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="intro" class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">Cracking the AI Job Interview</h1>
+            <p class="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">A step-by-step interactive guide for candidates and hiring teams, designed to help you navigate from preparation to offer.</p>
+        </section>
+
+        <section id="market" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2 text-center">Why AI Roles Are Hot</h2>
+            <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">The demand for AI talent is booming. This section provides a snapshot of the market, highlighting job growth and typical salary expectations across key roles. Understanding the landscape is the first step in your journey.</p>
+            <div class="grid md:grid-cols-3 gap-8 mb-12 text-center">
+                <div class="section-card p-6">
+                    <div class="text-5xl font-bold text-cyan-600 mb-2">+70%</div>
+                    <div class="text-slate-600 font-medium">YoY Job Growth</div>
+                    <div class="text-sm text-slate-400">(LinkedIn 2024)</div>
+                </div>
+                <div class="section-card p-6">
+                    <div class="text-5xl font-bold text-cyan-600 mb-2">~50%</div>
+                    <div class="text-slate-600 font-medium">Firms Face Skill Gaps</div>
+                    <div class="text-sm text-slate-400">High demand, low supply</div>
+                </div>
+                 <div class="section-card p-6">
+                    <div class="text-5xl font-bold text-cyan-600 mb-2">Top Tier</div>
+                    <div class="text-slate-600 font-medium">Companies are Hiring</div>
+                    <div class="text-sm text-slate-400">FAANG, Startups, Finance+</div>
+                </div>
+            </div>
+            <div class="section-card p-6 md:p-8">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4 text-center">Typical Salary Bands (US)</h3>
+                <p class="text-center text-slate-500 mb-6">Salaries vary by experience, location, and company. This chart shows typical base salary ranges for common AI roles. Hover over the bars for specific figures.</p>
+                <div class="chart-container">
+                    <canvas id="salaryChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="roles" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2 text-center">Find Your Fit: Common AI Roles</h2>
+            <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">The "AI" field is broad. Different roles require different skills and have different responsibilities. Explore this table to understand where you might fit best and what technologies are most relevant for each position.</p>
+            <div class="section-card overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="p-4 font-semibold text-slate-700">Title</th>
+                            <th class="p-4 font-semibold text-slate-700">Primary Responsibilities</th>
+                            <th class="p-4 font-semibold text-slate-700">Tools / Tech</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rolesTableBody" class="divide-y divide-slate-200">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="pipeline" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2 text-center">The Interview Journey</h2>
+             <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">AI interviews are typically multi-stage processes. This interactive diagram outlines the typical pipeline. Click on any stage to see a detailed description of what to expect.</p>
+            <div id="pipeline-container" class="flex items-center justify-center flex-wrap mb-8"></div>
+            <div id="pipeline-details" class="section-card p-6 mt-8 min-h-[100px] text-slate-700">
+                <p class="text-center font-medium">Click a stage above to see details.</p>
+            </div>
+        </section>
+
+        <section id="prep" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2 text-center">Build Your Foundation</h2>
+            <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">Success in AI interviews requires a solid foundation across multiple domains. Use these tabs to explore the core skills you must master, how to build a compelling portfolio, and where to find the best practice resources.</p>
+            <div class="section-card p-6 md:p-8">
+                <div id="prep-tabs-buttons" class="flex flex-wrap justify-center border-b border-slate-200 mb-6"></div>
+                <div id="prep-tabs-content"></div>
+            </div>
+        </section>
+
+        <section id="interview" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2 text-center">Master Each Interview Stage</h2>
+            <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">Each interview type tests a different skill set. This section breaks down what to expect in coding, ML theory, system design, and behavioral rounds, providing key topics and tips for each.</p>
+            <div class="section-card p-6 md:p-8">
+                <div id="interview-tabs-buttons" class="flex flex-wrap justify-center border-b border-slate-200 mb-6"></div>
+                <div id="interview-tabs-content"></div>
+            </div>
+        </section>
+        
+        <section id="closing" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2 text-center">The Final Stretch: From Interview to Offer</h2>
+            <p class="text-center text-slate-500 mb-8 max-w-2xl mx-auto">The process doesn't end with the last technical question. This final section covers best practices for remote interviews, what questions you should ask, and how to approach the negotiation phase.</p>
+            <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-8">
+                <div id="closing-practices" class="section-card p-6"></div>
+                <div id="closing-questions" class="section-card p-6"></div>
+                <div id="closing-negotiation" class="section-card p-6"></div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="text-center py-8 text-slate-500 text-sm">
+        <p>Interactive guide based on "Cracking the AI Job Interview".</p>
+        <p>Designed to make complex information accessible and engaging.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const salaryData = {
+                labels: ['ML Engineer', 'Data Scientist', 'AI Researcher'],
+                datasets: [{
+                    label: 'Lower Salary Band ($k)',
+                    data: [120, 110, 130],
+                    backgroundColor: '#67e8f9', // cyan-300
+                    borderColor: '#0e7490', // cyan-700
+                    borderWidth: 1
+                }, {
+                    label: 'Upper Salary Band ($k)',
+                    data: [190, 180, 250],
+                    backgroundColor: '#0891b2', // cyan-600
+                    borderColor: '#0e7490', // cyan-700
+                    borderWidth: 1
+                }]
+            };
+
+            const salaryConfig = {
+                type: 'bar',
+                data: salaryData,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: false,
+                            text: 'Typical Salary Bands (US)'
+                        },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(context.parsed.x * 1000);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Annual Salary (in thousands USD)'
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const salaryChartCtx = document.getElementById('salaryChart').getContext('2d');
+            new Chart(salaryChartCtx, salaryConfig);
+
+            const rolesData = [
+                ["Machine-Learning Engineer", "Build, test, deploy ML models in production", "Python, TensorFlow/PyTorch, Docker, Kubeflow"],
+                ["Data Scientist", "Exploratory analysis, model prototyping, storytelling", "Pandas, Scikit-learn, SQL, Tableau"],
+                ["AI Researcher / Scientist", "Publish novel algorithms, push SOTA", "PyTorch, JAX, research pipelines"],
+                ["MLOps Engineer", "CI/CD for ML, monitoring, scaling", "MLflow, Airflow, Terraform, GCP/AWS"],
+                ["AI Product Manager", "Translate business need into AI solution", "Roadmapping, KPI definition, stakeholder alignment"],
+            ];
+
+            const rolesTableBody = document.getElementById('rolesTableBody');
+            rolesData.forEach(rowData => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-slate-50';
+                rowData.forEach(cellData => {
+                    const cell = document.createElement('td');
+                    cell.className = 'p-4 text-slate-600';
+                    cell.textContent = cellData;
+                    row.appendChild(cell);
+                });
+                rolesTableBody.appendChild(row);
+            });
+
+            const pipelineData = [
+                { stage: 1, title: "Recruiter Screen", details: "15-30 min call to assess resume fit, motivation, and handle logistics. Be prepared to give your elevator pitch and ask basic questions about the role." },
+                { stage: 2, title: "Technical Screen", details: "45-60 min coding interview, often on a shared platform. Focuses on data structures and algorithms. Expect LeetCode-style problems." },
+                { stage: 3, title: "ML Theory/Case", details: "60-90 min discussion on ML concepts. You might be given a real-world problem to solve, testing your knowledge of model selection, evaluation, and trade-offs." },
+                { stage: 4, title: "System Design", details: "60-90 min interview to design an end-to-end ML system. Focus is on architecture, scalability, and practical trade-offs, not just model choice." },
+                { stage: 5, title: "On-site Loop", details: "A 4-5 hour series of interviews combining all previous stages, plus a behavioral/culture fit interview with the team manager or senior members." },
+                { stage: 6, title: "Take-Home", details: "(Optional) An offline project to build a complete solution. Usually includes coding, a dataset, and a write-up explaining your approach and results." },
+            ];
+
+            const pipelineContainer = document.getElementById('pipeline-container');
+            const pipelineDetails = document.getElementById('pipeline-details');
+            pipelineData.forEach((item, index) => {
+                const pipelineItem = document.createElement('div');
+                pipelineItem.className = 'pipeline-item flex-1 min-w-[150px] m-2';
+                pipelineItem.innerHTML = `<div class="number">${item.stage}</div><div class="font-semibold text-slate-700">${item.title}</div>`;
+                pipelineItem.addEventListener('click', () => {
+                    pipelineDetails.innerHTML = `<h4 class="font-bold text-lg mb-2 text-cyan-700">${item.title}</h4><p>${item.details}</p>`;
+                    document.querySelectorAll('.pipeline-item').forEach(el => el.classList.remove('active'));
+                    pipelineItem.classList.add('active');
+                });
+                pipelineContainer.appendChild(pipelineItem);
+                if (index < pipelineData.length - 1) {
+                    const connector = document.createElement('div');
+                    connector.className = 'pipeline-connector hidden md:block';
+                    pipelineContainer.appendChild(connector);
+                }
+            });
+
+            function createTabbedInterface(containerId, contentId, data) {
+                const buttonsContainer = document.getElementById(containerId);
+                const contentContainer = document.getElementById(contentId);
+
+                data.forEach((tabData, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'tab-button px-4 py-2 rounded-t-lg font-medium text-sm md:text-base text-slate-600 bg-slate-100 hover:bg-slate-200';
+                    button.textContent = tabData.title;
+                    button.dataset.target = `tab-${containerId}-${index}`;
+                    buttonsContainer.appendChild(button);
+
+                    const contentDiv = document.createElement('div');
+                    contentDiv.id = `tab-${containerId}-${index}`;
+                    contentDiv.className = 'hidden';
+                    let listHtml = '<ul class="space-y-3 list-disc list-inside text-slate-600">';
+                    tabData.bullets.forEach(bullet => {
+                        listHtml += `<li class="leading-relaxed">${bullet.replace(/•/g, '').trim()}</li>`;
+                    });
+                    listHtml += '</ul>';
+                    contentDiv.innerHTML = listHtml;
+                    contentContainer.appendChild(contentDiv);
+
+                    button.addEventListener('click', () => {
+                        buttonsContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        contentContainer.querySelectorAll('div').forEach(div => div.classList.add('hidden'));
+                        document.getElementById(button.dataset.target).classList.remove('hidden');
+                    });
+                });
+                buttonsContainer.firstChild.click();
+            }
+
+            const prepData = [
+                { title: "Core Foundations", bullets: ["📐 Mathematics – linear algebra, probability, statistics, optimisation", "🔍 Algorithms & DS – lists, hash maps, trees, sorting, recursion, O-notation", "🤖 ML Theory – supervised/unsupervised, over/under-fitting, regularisation, loss functions, metrics", "🐍 Programming (Python) – Pandas, NumPy, scikit-learn, PyTorch/TensorFlow, testing", "☁️ MLOps basics – model versioning, CI/CD, monitoring, data-drift"] },
+                { title: "Strong Portfolio", bullets: ["📄 Resume – 1-page, quantifiable impact: “Reduced churn-pred latency 45%”", "💻 GitHub – clean READMEs, CI pipelines, commented notebooks", "📝 Blog / Medium – problem, data, approach, results (clear writing)", "🏆 Kaggle – Top-10% finishes, share notebook", "📚 Publications / Patents – short abstract + link on CV"] },
+                { title: "Practice & Mocks", bullets: ["🚀 LeetCode / HackerRank – timed coding, medium-hard", "🗣️ Pramp, Exponent – free/paid mock technical & ML interviews", "🧪 Data-Science-Prep – case-study practice (customer segmentation)", "🛠️ System Design Club (Slack/Discord) – weekly design challenges", "👥 Peer-review – code walkthroughs, rubber-duck explanation"] }
+            ];
+            createTabbedInterface('prep-tabs-buttons', 'prep-tabs-content', prepData);
+
+            const interviewData = [
+                { title: "Coding Interview", bullets: ["Format: 1-2 problems, shared editor (CoderPad)", "Typical problems: Array/String, Graph/Tree, DP", "Tip: Write function signature first", "Tip: Outline brute-force, then optimise", "Tip: Verify with edge cases (empty, null)", "Tip: Think-aloud, explain your algorithm"] },
+                { title: "ML Theory / Case Study", bullets: ["🧠 Model selection – Imbalanced data, class-weight, SMOTE", "🔧 Feature engineering – Target encoding, hashing trick, embeddings", "🤝 Evaluation & bias – Data drift detection, retraining schedules", "🧠 Deep learning – Why use BatchNorm? Internal covariate shift", "📖 Research – Explain a recent paper (e.g., DistilBERT)"] },
+                { title: "System Design", bullets: ["🔎 Prompt: Design an end-to-end recommendation system", "Key elements: Data collection, feature store, training, serving, scaling, feedback loop", "Tip: Start high-level, then drill down", "Tip: Use a trade-off matrix (latency vs accuracy vs cost)", "Tip: Reference architectures like Lambda or Kappa"] },
+                { title: "Soft Skills & Culture", bullets: ["🔧 Storytelling – Use STAR method (Situation, Task, Action, Result)", "🤝 Collaboration – Give examples of cross-functional work", "🏅 Leadership – Show bias for action, customer obsession", "📚 Learning mindset – Talk about recent courses, papers, side-projects", "⚖️ Responsible AI – Discuss fairness, privacy, model interpretability"] }
+            ];
+            createTabbedInterface('interview-tabs-buttons', 'interview-tabs-content', interviewData);
+
+            const closingPractices = {
+                title: "Remote Interview Best Practices",
+                bullets: ["🧱 Environment – quiet room, neutral background, stable internet", "🖥️ Technical setup – dual monitors, cheat-sheet (paper) for formulas", "🗣️ Communication – speak clearly, pause after answering, use virtual whiteboard", "🕺 Body language – sit upright, make eye contact via camera"]
+            };
+            const closingQuestions = {
+                title: "What to Ask the Interviewer",
+                bullets: ["How does the team handle model monitoring and data-drift?", "What are the biggest technical challenges the ML team is tackling?", "Walk me through a recent project from ideation to production.", "What does career growth look like for this role?", "How does the organization approach responsible AI?"]
+            };
+            const closingNegotiation = {
+                title: "Offer Negotiation & Next Steps",
+                bullets: ["❝Post-interview thank-you❞ (within 24h)", "❝Review offer❞ – base + bonus + equity + signing bonus", "❝Benchmark❞ – levels.fyi, Glassdoor, peer data", "❝Negotiate❞ – total comp, vesting, training budget", "❝Decision timeline❞ – ask for 5-7 days to respond"]
+            };
+            
+            function populateClosingCard(containerId, data) {
+                const container = document.getElementById(containerId);
+                let html = `<h3 class="font-bold text-xl mb-4 text-slate-800">${data.title}</h3>`;
+                html += '<ul class="space-y-3 list-disc list-inside text-slate-600">';
+                data.bullets.forEach(bullet => {
+                    html += `<li class="leading-relaxed">${bullet}</li>`;
+                });
+                html += '</ul>';
+                container.innerHTML = html;
+            }
+
+            populateClosingCard('closing-practices', closingPractices);
+            populateClosingCard('closing-questions', closingQuestions);
+            populateClosingCard('closing-negotiation', closingNegotiation);
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 80) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
